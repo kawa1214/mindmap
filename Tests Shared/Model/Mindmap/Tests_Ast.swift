@@ -1,34 +1,29 @@
 //
-//  Lexer.swift
-//  Tests Shared
+// Created by ryo kawamura on 2022/03/10.
 //
-//  Created by ryo kawamura on 2022/02/28.
-//
+
 
 import XCTest
 import Foundation
 
 @testable import mindmap
 
-class TestsLexer: XCTestCase {
+class TestsAst: XCTestCase {
     func testNextToken() {
         let input = """
-### h3text
+                    ### h3text
 
-## h2text
+                    ## h2text
 
-# h1text
+                    # h1text
 
-##nohtext
+                    ##nohtext
 
-test
-test
+                    test
+                    test
 
-test
-test
-
-## test
-"""
+                    test
+                    """
         let tokens: Array<Token> = [
             Token(type: TokenType.h1, literal: "#"),
             Token(type: TokenType.text, literal: "test"),

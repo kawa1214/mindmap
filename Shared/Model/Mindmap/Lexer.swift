@@ -25,7 +25,9 @@ class Lexer {
 
         if isHTag() && isStartHtag() {
             let hTagToken = readHTag()
-            return hTagToken;
+            if (hTagToken != nil) {
+                return hTagToken!
+            }
         }
         
         let readToken = readText()
@@ -47,7 +49,13 @@ class Lexer {
         if (readPosition.hashValue == input.endIndex.hashValue ) {
             return false;
         }
+        if (position.hashValue == input.endIndex.hashValue) {
+            return false;
+        }
+
         let nextReadPosition = self.input.index(after: readPosition)
+
+        
         return !(self.input[self.readPosition] == "\n" && self.input[nextReadPosition] == "\n")
     }
     
@@ -57,7 +65,11 @@ class Lexer {
         }
         
         let nextReadPosition = self.input.index(after: readPosition)
-
+        
+        if (nextReadPosition.hashValue == input.endIndex.hashValue) {
+            return false;
+        }
+        
         return self.input[self.readPosition] == "\n" && self.input[nextReadPosition] == "\n"
     }
     
@@ -97,16 +109,26 @@ class Lexer {
         return self.input[self.readPosition] == "#"
     }
 
-    func readHTag() -> Token {
+    func readHTag() -> Token? {
         let startPosition = self.position!;
-        let save = self
+        let savePosition = self.position
+        let saveCh = self.ch
+        let saveReadPosition = self.readPosition
+        let savePrevPosition = self.prevPosition
         
         while isHTag() {
             self.readChar()
         }
 
         //
-        
+        if (self.input[self.position!] != " ") {
+            self.position = savePosition
+            self.ch = saveCh
+            self.readPosition = saveReadPosition
+            self.prevPosition = savePrevPosition
+            return nil;
+        }
+
         let indexRange = startPosition..<self.position!
         let result = self.input.substring(with: indexRange)
 
